@@ -1,14 +1,16 @@
 from dotenv import load_dotenv
-from pathlib import Path
+import pathlib
+import os
 
 
 def load_environment() -> None:
-    env_path = Path(".") / ".env"
+    env_path = os.path.join(pathlib.Path(__file__).parent.absolute(), ".env")
     load_dotenv(env_path)
 
 
 def main():
     load_environment()
+    os.environ.get("DB_PASS")
 
     from password_manager.menu.menu import Menu
     from password_manager.db.db_management import AccountService
