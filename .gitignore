@@ -3,6 +3,7 @@
 .idea/
 __pycache__/
 *.txt
+!requirements.txt
 .env
 *.log
 *.db

@@ -1,0 +1,14 @@
+astroid==2.4.2
+cffi==1.14.0
+cryptography==2.9.2
+isort==4.3.21
+lazy-object-proxy==1.4.3
+mccabe==0.6.1
+passgen==1.1.1
+psycopg2==2.8.5
+pycparser==2.20
+python-dotenv==0.14.0
+six==1.15.0
+SQLAlchemy==1.3.17
+toml==0.10.1
+wrapt==1.12.1
