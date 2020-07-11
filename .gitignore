@@ -3,5 +3,6 @@
 .idea/
 __pycache__/
 *.txt
-password_manager/.env
+.env
 *.log
+*.db

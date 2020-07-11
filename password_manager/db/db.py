@@ -6,8 +6,8 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
-DB_PASS = os.environ.get('DB_PASS')
-engine = create_engine("postgresql+psycopg2://password_manager:%s@localhost:5432/password_manager" % DB_PASS)
+DB_PATH = os.environ.get('DB_PATH')
+engine = create_engine("sqlite:////%s" % DB_PATH)
 
 Session = sessionmaker(bind=engine)
 
