@@ -15,17 +15,15 @@ def clear():
 
 class Menu:
     """Class for console menu."""
-    def __init__(self, account_service: AccountService):
+    def __init__(self):
         self._running = True
         self._account = None
         self._key = None
-        self._account_service = account_service
-        self._bunch_service = BunchService()
 
     def run(self, login: str) -> None:
         """Start menu."""
         clear()
-        self._account = self._account_service.find_account(login)
+        self._account = AccountService.find_account(login)
         self._key = get_key(self._account.password)
         choices = {
             1: self._show_bunches,
@@ -52,7 +50,7 @@ class Menu:
     def _show_bunches(self) -> None:
         """Print bunches of authorized user."""
         clear()
-        bunches = self._bunch_service.get_all_bunches(self._account, self._key)
+        bunches = BunchService.get_all_bunches(self._account, self._key)
         if not bunches:
             self._print_message("No brunches yet")
             return
@@ -88,7 +86,7 @@ class Menu:
     def _verify_new_bunch(self, bunch: tuple) -> None:
         answer = input("Is data correct?[y/n]: ")
         if answer.lower() == "y":
-            self._bunch_service.create_bunch(
+            BunchService.create_bunch(
                 encrypt_value(bunch[0], self._key),
                 encrypt_value(bunch[1], self._key),
                 bunch[2],
@@ -99,7 +97,7 @@ class Menu:
         """Deleting bunches of inputted indexes."""
         clear()
         run = True
-        bunches = self._bunch_service.get_all_bunches(self._account, self._key)
+        bunches = BunchService.get_all_bunches(self._account, self._key)
         if not bunches:
             self._print_message("No bunches to delete")
             return
@@ -109,7 +107,7 @@ class Menu:
                 bunch_ids = self._bunch_ids_from_input()
                 answer = input("Are you sure you want to delete bunches?[y/n]")
                 if answer == "y":
-                    self._bunch_service.delete_bunches_by_ids(bunch_ids)
+                    BunchService.delete_bunches_by_ids(bunch_ids)
                 run = False
             except ValueError:  # If type of one index is not int it will raise error
                 self._print_message('Indexes must be numbers')
@@ -119,7 +117,7 @@ class Menu:
         """Take indexes of bunches from input and get their ids."""
         indexes = input("Enter indexes of bunches you want to delete: ")
         indexes = [int(index) - 1 for index in indexes.split()]
-        bunches = self._bunch_service.get_all_bunches(self._account, self._key)
+        bunches = BunchService.get_all_bunches(self._account, self._key)
         return [bunch.id for i, bunch in enumerate(bunches) if i in indexes]
 
     def _find_bunch(self) -> None:
@@ -127,7 +125,7 @@ class Menu:
         clear()
         name = input("Enter the name: ")
         clear()
-        bunches = self._bunch_service.find_bunch(name, self._account, self._key)
+        bunches = BunchService.find_bunch(name, self._account, self._key)
         if not bunches:
             self._print_message("No brunches with such name: %s" % name)
             return
