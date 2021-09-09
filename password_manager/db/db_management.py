@@ -3,14 +3,7 @@ import typing
 from collections import namedtuple
 
 from password_manager.security.security import hash_value, verify_value, decrypt_value
-from password_manager.db.db import (
-    add_account,
-    find_account_by_login,
-    add_bunch, Account,
-    find_bunches_by_name,
-    find_bunches_by_account_id,
-    delete_bunches_by_ids,
-)
+from password_manager.db.db import Account, AccountRepo, BunchRepo
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +17,7 @@ class BunchService:
         """Create bunch with given variables."""
         try:
             logger.info("Receive bunch for account: %s" % account)
-            add_bunch(encrypted_login, encrypted_password, name, account)
+            BunchRepo.add_bunch(encrypted_login, encrypted_password, name, account)
             logger.info("Added new bunch for account: %s" % account)
         except Exception as e:
             logger.warning(e)
@@ -34,7 +27,7 @@ class BunchService:
         """Find bunches if they exists and decrypt them with provided key."""
         try:
             logging.info("Finding bunches with name: %s" % name)
-            bunches = find_bunches_by_name(name, account.id)
+            bunches = BunchRepo.find_bunches_by_name(name, account.id)
             logging.info("Decrypting bunches")
             decrypted_bunches = [
                 BunchObject(
@@ -55,7 +48,7 @@ class BunchService:
         """Return list of Bunch object and decrypt them with provided key."""
         try:
             logger.info("Finding bunches by account_id: %d" % account.id)
-            bunches = find_bunches_by_account_id(account.id)
+            bunches = BunchRepo.find_bunches_by_account_id(account.id)
             logger.info("Decrypting bunches")
             decrypted_bunches = [
                 BunchObject(
@@ -76,7 +69,7 @@ class BunchService:
         """Delete bunches with provided ids."""
         try:
             logger.info("Deleting bunches with ids: ", bunches)
-            delete_bunches_by_ids(bunches)
+            BunchRepo.delete_bunches_by_ids(bunches)
         except Exception as e:
             logger.warning(e)
 
@@ -88,7 +81,7 @@ class AccountService:
         hashed_password = hash_value(password)
         try:
             logging.info("Adding account\nLogin: %s\nPassword: %s" % (login, password))
-            add_account(login, hashed_password)
+            AccountRepo.add_account(login, hashed_password)
         except Exception as e:
             logger.warning(e)
 
@@ -96,7 +89,7 @@ class AccountService:
     def identify_account(login: str, password: str) -> bool:
         try:
             logging.info("Finding account by login: %s" % login)
-            account = find_account_by_login(login)
+            account = AccountRepo.find_account_by_login(login)
             if not account:
                 print("No such account: %s" % login)
                 return False
@@ -108,6 +101,6 @@ class AccountService:
     def find_account(login: str) -> typing.Optional[Account]:
         try:
             logging.info("Finding account by login: %s" % login)
-            return find_account_by_login(login)
+            return AccountRepo.find_account_by_login(login)
         except Exception as e:
             logger.warning(e)

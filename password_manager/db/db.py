@@ -40,35 +40,40 @@ class Bunch(Base):
 session = Session()
 
 
-def find_account_by_login(login: str) -> typing.Optional[Account]:
-    return session.query(Account).filter_by(username=login).one_or_none()
+class AccountRepo:
+    @staticmethod
+    def find_account_by_login(login: str) -> typing.Optional[Account]:
+        return session.query(Account).filter_by(username=login).one_or_none()
+
+    @staticmethod
+    def add_account(login: str, hashed_password: str) -> None:
+        session.add(
+            Account(username=login, password=hashed_password),
+        )
+        session.commit()
 
 
-def add_account(login: str, hashed_password: str) -> None:
-    session.add(
-        Account(username=login, password=hashed_password),
-    )
-    session.commit()
+class BunchRepo:
 
+    @staticmethod
+    def add_bunch(encrypted_login: str, encrypted_password: str, name: str, account: Account) -> None:
+        account.bunches.append(
+            Bunch(login=encrypted_login, password=encrypted_password, name=name, account_id=account.id),
+        )
+        session.commit()
 
-def add_bunch(encrypted_login: str, encrypted_password: str, name: str, account: Account) -> None:
-    account.bunches.append(
-        Bunch(login=encrypted_login, password=encrypted_password, name=name, account_id=account.id),
-    )
-    session.commit()
+    @staticmethod
+    def find_bunches_by_name(name: str, account_id: int) -> typing.List[Bunch]:
+        return session.query(Bunch).filter_by(name=name, account_id=account_id)
 
+    @staticmethod
+    def find_bunches_by_account_id(account_id: int) -> typing.List[Bunch]:
+        return session.query(Bunch).filter_by(account_id=account_id)
 
-def find_bunches_by_name(name: str, account_id: int) -> typing.List[Bunch]:
-    return session.query(Bunch).filter_by(name=name, account_id=account_id)
-
-
-def find_bunches_by_account_id(account_id: int) -> typing.List[Bunch]:
-    return session.query(Bunch).filter_by(account_id=account_id)
-
-
-def delete_bunches_by_ids(bunch_ids: typing.List[int]) -> None:
-    stmt = Bunch.__table__.delete().where(Bunch.id.in_(bunch_ids))
-    engine.execute(stmt)
+    @staticmethod
+    def delete_bunches_by_ids(bunch_ids: typing.List[int]) -> None:
+        stmt = Bunch.__table__.delete().where(Bunch.id.in_(bunch_ids))
+        engine.execute(stmt)
 
 
 def close_connection() -> None:

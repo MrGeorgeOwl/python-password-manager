@@ -1,5 +1,8 @@
 # Password manager
-Project for keeping my passwords safe
+Console application to store your passwords sneaky
+
+# Requirements
+
 
 # TODO:
 

@@ -71,27 +71,30 @@ class Menu:
                 "Login: %s | Password: %s | Name: %s"
                 % (bunch[0], bunch[1], bunch[2])
             )
-            self._verify_new_bunch(bunch)
+            if self._verify_new_bunch():
+                BunchService.create_bunch(
+                    encrypt_value(bunch[0], self._key),
+                    encrypt_value(bunch[1], self._key),
+                    bunch[2],
+                    self._account,
+                )
             clear()
             self._print_message("Bunch was created")
             run = False
 
     @staticmethod
     def _input_new_bunch() -> tuple:
+        """Take input of user."""
         login = input('Login: ')
         password = input('Password: ')
         name = input('Name: ')
         return login, password, name
 
-    def _verify_new_bunch(self, bunch: tuple) -> None:
+    @staticmethod
+    def _verify_new_bunch() -> bool:
+        """Asks user if he write bunch correct."""
         answer = input("Is data correct?[y/n]: ")
-        if answer.lower() == "y":
-            BunchService.create_bunch(
-                encrypt_value(bunch[0], self._key),
-                encrypt_value(bunch[1], self._key),
-                bunch[2],
-                self._account,
-            )
+        return answer.lower() == "y"
 
     def _delete_bunch(self) -> None:
         """Deleting bunches of inputted indexes."""
@@ -101,6 +104,7 @@ class Menu:
         if not bunches:
             self._print_message("No bunches to delete")
             return
+        # Ask user about deleting brunch until he choose one
         while run:
             try:
                 self._show_bunches()
