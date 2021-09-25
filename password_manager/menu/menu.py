@@ -1,9 +1,13 @@
 import os
 import typing
+from collections import namedtuple
 
 from db.db_management import AccountService, BunchService
-from security.security import get_key, encrypt_value
+from security.security import get_key
 from db.db import close_connection
+
+
+InputBunch = namedtuple('InputBunch', ['login', 'password', 'name'])
 
 
 def clear():
@@ -52,7 +56,7 @@ class Menu:
         clear()
         bunches = BunchService.get_all_bunches(self._account, self._key)
         if not bunches:
-            self._print_message("No brunches yet")
+            self._print_message("No bunches yet")
             return
         output = [
             f"{i + 1}.Login: {bunch.login} | Password: {bunch.password} | {bunch.name}"
@@ -69,26 +73,27 @@ class Menu:
             clear()
             self._print_message(
                 "Login: %s | Password: %s | Name: %s"
-                % (bunch[0], bunch[1], bunch[2])
+                % (bunch.login, bunch.password, bunch.name)
             )
             if self._verify_new_bunch():
                 BunchService.create_bunch(
-                    encrypt_value(bunch[0], self._key),
-                    encrypt_value(bunch[1], self._key),
-                    bunch[2],
+                    bunch.login,
+                    bunch.password,
+                    bunch.name,
                     self._account,
+                    self._key
                 )
             clear()
             self._print_message("Bunch was created")
             run = False
 
     @staticmethod
-    def _input_new_bunch() -> tuple:
+    def _input_new_bunch() -> InputBunch:
         """Take input of user."""
         login = input('Login: ')
         password = input('Password: ')
         name = input('Name: ')
-        return login, password, name
+        return InputBunch(login, password, name)
 
     @staticmethod
     def _verify_new_bunch() -> bool:
@@ -147,7 +152,8 @@ class Menu:
         """Output lists or one message in beautiful manner."""
         if isinstance(output, list):
             delimiter = "=" * len(max(output, key=lambda i: len(i)))
-            print(delimiter + "\n" + "\n".join(output) + "\n" + delimiter)
+            output = "\n".join(output)
+            print(f'{delimiter}\n{output}\n{delimiter}')
         else:
             delimiter = "=" * len(output)
-            print(delimiter + "\n" + output + "\n" + delimiter)
+            print(f'{delimiter}\n{output}\n{delimiter}')

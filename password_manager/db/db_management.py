@@ -2,25 +2,31 @@ import logging
 import typing
 from collections import namedtuple
 
-from security.security import hash_value, verify_value, decrypt_value
+from security.security import hash_value, verify_value, encrypt_value, decrypt_value
 from db.db import Account, AccountRepo, BunchRepo
 
-logger = logging.getLogger(__name__)
 
 BunchObject = namedtuple('BunchObject', ['id', 'login', 'password', 'name', 'account_id'])
 
 
 class BunchService:
     @staticmethod
-    def create_bunch(encrypted_login: str, encrypted_password: str,
-                     name: str, account: Account) -> None:
+    def create_bunch(
+        login: str,
+        password: str,
+        name: str,
+        account: Account,
+        key: bytes,
+    ) -> None:
         """Create bunch with given variables."""
         try:
-            logger.info("Receive bunch for account: %s" % account)
+            encrypted_login = encrypt_value(login, key)
+            encrypted_password = encrypt_value(password, key)
+            logging.info(f"Receive bunch for account: {account}")
             BunchRepo.add_bunch(encrypted_login, encrypted_password, name, account)
-            logger.info("Added new bunch for account: %s" % account)
+            logging.info(f"Added new bunch for account: {account}")
         except Exception as e:
-            logger.warning(e)
+            logging.warning(e)
 
     @staticmethod
     def find_bunch(name: str, account: Account, key: bytes) -> typing.List[BunchObject]:
@@ -41,15 +47,15 @@ class BunchService:
             ]
             return decrypted_bunches
         except Exception as e:
-            logger.warning(e)
+            logging.warning(e)
 
     @staticmethod
     def get_all_bunches(account: Account, key: bytes) -> typing.List[BunchObject]:
         """Return list of Bunch object and decrypt them with provided key."""
         try:
-            logger.info("Finding bunches by account_id: %d" % account.id)
+            logging.info("Finding bunches by account_id: %d" % account.id)
             bunches = BunchRepo.find_bunches_by_account_id(account.id)
-            logger.info("Decrypting bunches")
+            logging.info("Decrypting bunches")
             decrypted_bunches = [
                 BunchObject(
                     bunch.id,
@@ -62,16 +68,16 @@ class BunchService:
             ]
             return decrypted_bunches
         except Exception as e:
-            logger.warning(e)
+            logging.warning(e)
 
     @staticmethod
     def delete_bunches_by_ids(bunches: typing.List[int]) -> None:
         """Delete bunches with provided ids."""
         try:
-            logger.info("Deleting bunches with ids: ", bunches)
+            logging.info("Deleting bunches with ids: ", bunches)
             BunchRepo.delete_bunches_by_ids(bunches)
         except Exception as e:
-            logger.warning(e)
+            logging.warning(e)
 
 
 class AccountService:
@@ -83,7 +89,7 @@ class AccountService:
             logging.info("Adding account\nLogin: %s\nPassword: %s" % (login, password))
             AccountRepo.add_account(login, hashed_password)
         except Exception as e:
-            logger.warning(e)
+            logging.warning(e)
 
     @staticmethod
     def identify_account(login: str, password: str) -> bool:
@@ -95,7 +101,7 @@ class AccountService:
                 return False
             return verify_value(account.password, password)
         except Exception as e:
-            logger.warning(e)
+            logging.warning(e)
 
     @staticmethod
     def find_account(login: str) -> typing.Optional[Account]:
@@ -103,4 +109,4 @@ class AccountService:
             logging.info("Finding account by login: %s" % login)
             return AccountRepo.find_account_by_login(login)
         except Exception as e:
-            logger.warning(e)
+            logging.warning(e)
