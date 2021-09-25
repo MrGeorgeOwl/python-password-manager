@@ -1,9 +1,9 @@
 import os
 import typing
 
-from password_manager.db.db_management import AccountService, BunchService
-from password_manager.security.security import get_key, encrypt_value
-from password_manager.db.db import close_connection
+from db.db_management import AccountService, BunchService
+from security.security import get_key, encrypt_value
+from db.db import close_connection
 
 
 def clear():

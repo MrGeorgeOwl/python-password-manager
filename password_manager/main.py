@@ -1,3 +1,4 @@
+#!/Users/georgy.parhomenko/code/PythonProjects/password_manager/env/bin/python
 from dotenv import load_dotenv
 import pathlib
 import os
@@ -32,7 +33,7 @@ def main():
     )
     logger = logging.getLogger(__name__)
 
-    from password_manager.menu.menu import Menu
+    from menu.menu import Menu
     logger.info("Reading user input")
     login = input("Enter login: ")
     password = input("Enter password: ")
@@ -46,7 +47,7 @@ def main():
 
 if __name__ == "__main__":
     load_environment()
-    from password_manager.db.db_management import AccountService
+    from db.db_management import AccountService
     if len(sys.argv) > 1:
         proccess_console_commands()
     else:

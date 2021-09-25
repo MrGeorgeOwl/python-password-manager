@@ -2,8 +2,8 @@ import logging
 import typing
 from collections import namedtuple
 
-from password_manager.security.security import hash_value, verify_value, decrypt_value
-from password_manager.db.db import Account, AccountRepo, BunchRepo
+from security.security import hash_value, verify_value, decrypt_value
+from db.db import Account, AccountRepo, BunchRepo
 
 logger = logging.getLogger(__name__)
 
