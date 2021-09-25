@@ -6,6 +6,17 @@ import logging
 import sys
 
 
+def configure_logging():
+    handler = logging.FileHandler(
+        filename=os.environ.get("LOGFILE_PATH"),
+    )
+    logging.basicConfig(
+        format="%(asctime)s %(filename)s %(levelname)s:%(message)s",
+        level=logging.INFO,
+        handlers=[handler],
+    )
+
+
 def load_environment() -> None:
     """Loading environments variables from .env file."""
     env_path = os.path.join(pathlib.Path(__file__).parent.parent.absolute(), ".env")
@@ -25,16 +36,8 @@ def proccess_console_commands() -> None:
 
 
 def main():
-    logging.basicConfig(
-        filename=os.environ.get("LOGFILE_PATH"),
-        filemode='w',
-        format="%(asctime)s %(filename)s %(levelname)s:%(message)s",
-        level=logging.DEBUG,
-    )
-    logger = logging.getLogger(__name__)
-
     from menu.menu import Menu
-    logger.info("Reading user input")
+    logging.info("Reading user input")
     login = input("Enter login: ")
     password = input("Enter password: ")
     menu = Menu()
@@ -47,6 +50,7 @@ def main():
 
 if __name__ == "__main__":
     load_environment()
+    configure_logging()
     from db.db_management import AccountService
     if len(sys.argv) > 1:
         proccess_console_commands()
