@@ -9,3 +9,4 @@ __pycache__/
 *.db
 env/
 *.pyc
+/password_manager/password_manager
