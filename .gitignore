@@ -11,3 +11,4 @@ env/
 *.pyc
 /password_manager/password_manager
 credentials.ini
+.python-version
