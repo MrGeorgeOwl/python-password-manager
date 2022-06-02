@@ -3,7 +3,7 @@ from collections import namedtuple
 import logging
 import typing
 
-from sqlalchemy import delete
+from sqlalchemy import and_
 
 from models import Session, Account, Bunch
 from security.security import verify_value, hash_value, decrypt_value, encrypt_value
@@ -73,9 +73,11 @@ class BunchService:
 
     def _find_bunches_by_name(self, name: str, account_id: int) -> typing.List[Bunch]:
         """Find bunches by name of the bunch."""
-        return self.session.query(Bunch).filter_by(
-            name=name,
-            account_id=account_id,
+        return self.session.query(Bunch).filter(
+            and_(
+                Bunch.name.ilike(f'%{name}%'),
+                Bunch.account_id == account_id,
+            )
         )
 
     def find_bunches_by_account_id(self, account_id: int) -> typing.List[Bunch]:

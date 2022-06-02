@@ -37,5 +37,4 @@ class Bunch(Base):
         return "<Bunch(login=%s, password=%s, name=%s)" % (self.login, self.password, self.name)
 
 
-
 Base.metadata.create_all(engine)
