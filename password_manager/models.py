@@ -6,8 +6,8 @@ from sqlalchemy.ext.declarative import declarative_base
 
 
 Base = declarative_base()
-DB_PATH = os.environ.get('DB_PATH')
-engine = create_engine("sqlite:////%s" % DB_PATH)
+DB_PATH = os.environ.get('DB_PATH', 'sqlite:////./default_db.db')
+engine = create_engine(DB_PATH)
 
 Session = sessionmaker(bind=engine)
 
