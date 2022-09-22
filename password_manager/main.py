@@ -1,18 +1,26 @@
-#!/Users/georgy.parhomenko/code/PythonProjects/password_manager/env/bin/python
+#! /Users/Heorhi_Parkhomenka/code/python-password-manager/env/bin/python
 from dotenv import load_dotenv
 import pathlib
 import os
 import logging
 
 
-BASE_DIR = pathlib.Path(__file__).parent.parent.absolute()
+if os.path.islink(__file__):
+    real_path = os.path.realpath(__file__)
+else:
+    real_path = __file__
+BASE_DIR = pathlib.Path(real_path).parent.parent.absolute()
 CONFIG_NAME = "credentials.ini"
 CONFIG_PATH = os.path.join(BASE_DIR, CONFIG_NAME)
 
 
 def configure_logging():
+    logfile_path = os.environ.get(
+        "LOGFILE_PATH",
+        BASE_DIR / "log.txt",
+    )
     handler = logging.FileHandler(
-        filename=os.environ.get("LOGFILE_PATH"),
+        filename=logfile_path,
     )
     logging.basicConfig(
         format="%(asctime)s %(filename)s %(levelname)s:%(message)s",
