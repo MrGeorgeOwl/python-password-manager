@@ -21,7 +21,7 @@ class Account(Base):
     bunches = relationship('Bunch', backref='account')
 
     def __repr__(self):
-        return "<Account(username=%s, password=%s)>" % (self.username, self.password)
+        return f"<Account(username={self.username}, password={self.password})>"
 
 
 class Bunch(Base):
@@ -34,7 +34,7 @@ class Bunch(Base):
     account_id = Column(Integer, ForeignKey('accounts.id'))
 
     def __repr__(self):
-        return "<Bunch(login=%s, password=%s, name=%s)" % (self.login, self.password, self.name)
+        return f"<Bunch(login={self.login}, password={self.password}, name={self.name})"
 
 
 Base.metadata.create_all(engine)

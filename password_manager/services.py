@@ -20,7 +20,10 @@ class AccountService:
         self.session = session
 
     def find_account_by_username(self, username: str) -> typing.Optional[Account]:
-        return self.session.query(Account).filter_by(username=username).one_or_none()
+        return self.session\
+                .query(Account)\
+                .filter_by(username=username)\
+                .one_or_none()
 
     def add_account(self, username: str, password: str) -> None:
         hashed_password = hash_value(password)
@@ -39,7 +42,11 @@ class AccountService:
             return False
         return verify_value(account.password, password)
 
-    def authorize_user(self, username: str, password: str) -> typing.Optional[Account]:
+    def authorize_user(
+        self, 
+        username: str, 
+        password: str,
+    ) -> typing.Optional[Account]:
         if self.identify_account(username, password):
             return self.find_account_by_username(username)
         return None
@@ -81,15 +88,16 @@ class BunchService:
         )
 
     def find_bunches_by_account_id(self, account_id: int) -> typing.List[Bunch]:
-        return self.session.query(Bunch).filter_by(account_id=account_id)
+        return self.session\
+                .query(Bunch)\
+                .filter_by(account_id=account_id)
 
     def delete_bunches_by_ids(self, bunch_ids: typing.List[int]) -> None:
         """Delete bunches with provided ids."""
-        self.session.query(Bunch).filter(
-            Bunch.id.in_(bunch_ids),
-        ).delete(
-            synchronize_session="fetch",
-        )
+        self.session\
+            .query(Bunch)\
+            .filter(Bunch.id.in_(bunch_ids))\
+            .delete(synchronize_session="fetch")
         self.session.commit()
 
     def get_all_bunches(self, account: Account) -> typing.List[BunchObject]:
