@@ -9,7 +9,7 @@ import typer
 
 from models import Session
 from main import CONFIG_PATH
-from security.security import get_key
+from security import get_key
 from services import AccountService
 
 if typing.TYPE_CHECKING:
